@@ -1,11 +1,11 @@
 .sidebar-ta{
     background-color: #336699;
-    width: 6%;
+    width: 7.5%;
     margin-top: 39px;
     color: white;
     font-size: 17px;
     font-family: 'Roboto Slab', serif;
-    padding-left: 13px;
+    padding-left: 18px;
     padding-right: 7.5px;
 }
 .navb{
@@ -57,3 +57,40 @@
 #fcb{
     color: gray;
 }
+.followed{
+    margin-bottom: 20px;
+    padding: 15px 60px;
+}
+.unfollowed{
+    margin-bottom: 20px;
+    padding: 15px 60px;
+}
+.blocked{
+    margin-bottom: 20px;
+    padding: 15px 60px;
+}
+.time{
+    font-size: 12px;
+    color: #008fb3;
+}
+.w3-tomato-text{
+    color: #ff9999;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
