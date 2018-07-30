@@ -13,7 +13,7 @@
   <body>
         <div class="w3-sidebar sidebar-ta w3-bar-block w3-card-4">
       <a href="#" class="w3-bar-item w3-hover-none w3-button"><span class="glyphicon glyphicon-lock"></span></a>
-      <a href="#" class="w3-bar-item w3-hover-none w3-button"><span class="fa fa-bell"><span class='w3-animate-fading' style="color:#00cccc;"> 3</span></span></a>
+      <a href="#" class="w3-bar-item w3-hover-none w3-button"><span class="fa fa-bell"><span class='w3-animate-fading'> 3</span></span></a>
       <a href="#" class="w3-bar-item w3-hover-none w3-button"><span class="glyphicon glyphicon-ok"></span></a>
       <a href="#" class="w3-bar-item w3-hover-none w3-button"><span class="glyphicon glyphicon-flag"></span></a>
       <a href="#" class="w3-bar-item w3-hover-none w3-button"><span class="glyphicon glyphicon-bookmark"></span></a>
@@ -31,7 +31,19 @@
         </section>
          <section class="content">
          <div class="container">
-           <div id="myDiv"></div>
+           <div id="myDiv">
+               <div class="w3-card-4">
+               <div class="followed">
+               <i class="glyphicon glyphicon-user w3-text-green"></i> Felani <span class="w3-text-gray">@felaniuser</span> started following you. | <span class="time">friday 02:05 pm.</span><img src="../static/images/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:35px">
+               </div>
+               <div class="unfollowed">
+               <i class="glyphicon glyphicon-user w3-tomato-text"></i> Felani <span class="w3-text-gray">@felaniuser</span> unfollowed you. | <span class="time">friday 02:05 pm.</span><img src="../static/images/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:35px">
+               </div>
+               <div class="blocked">
+               <i class="glyphicon glyphicon-user w3-text-gray"></i> Felani <span class="w3-text-gray">@felaniuser</span> blocked you. | <span class="time">friday 02:05 pm.</span><img src="../static/images/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:35px">
+               </div>
+               </div>
+           </div>
           </div>
           </section>
           <script src="../static/js/plotly-latest.min.js"></script>
