@@ -52,7 +52,13 @@ def send_webs(path):
     return send_from_directory('templates', path)
     
 def fetch_and_store():
-    return ["{x:[1,2,3],y:[3,4,3],name:'test'}","{x:[1,2,3],y:[4,2,3],name:'test'}"]
+    datas = [
+        {'x':[1,2,3],'y':[3,4,6],'name':'test1'},
+        {'x':[1,2,3],'y':[3,4,6],'name':'test2'},
+        {'x':[1,2,3],'y':[3,4,6],'name':'test3'},
+
+    ]
+    return [json.dumps(x) for x in datas]
 @app.route("/data/chart", methods=['GET'])
 def chart_data():
     data = fetch_and_store()
