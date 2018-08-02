@@ -1,2 +1,4 @@
+tweepy=3.6.0
 Flask==1.0.2
 Flask-Session==0.3.1
+tweeli=1.0.1

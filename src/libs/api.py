@@ -18,7 +18,22 @@ def isLoggedIn():
         return True
     else:
         return False
-
+@app.before_request
+def before_request():
+    app.logger.debug('before request %s',request.endpoint)
+    if isLoggedIn():
+        if request.endpoint == 'send_login':
+            return redirect("/html/index.html",code=302)
+        if request.endpoint == 'login':
+            return redirect("/html/index.html",code=302)
+        else:
+            return
+    else:
+        if request.endpoint == 'send_login':
+            return 
+        if request.endpoint == 'login':
+            return 
+    return redirect("/html/login.html",code=302)
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     session.clear()
@@ -29,39 +44,29 @@ def login():
     if isLoggedIn():
         return redirect("/html/index.html",code=302)
     return '';
+@app.route('/html/login.html')
+def send_login():
+    return send_from_directory('templates', "login.html")
 @app.route('/html/<path:path>')
-def send_js(path):
-    if (path != "login.html")and ('html' in path):
-        if not isLoggedIn():
-            return redirect("/html/login.html",code=302)
-    if (path == "login.html") and isLoggedIn():
-        return redirect("/html/index.html",code=302)
-    return send_from_directory('html', path)
+def send_webs(path):
+    return send_from_directory('templates', path)
+    
+def fetch_and_store():
+    datas = [
+        {'x':[1,2,3],'y':[3,4,6],'name':'test1'},
+        {'x':[1,2,3],'y':[3,4,6],'name':'test2'},
+        {'x':[1,2,3],'y':[3,4,6],'name':'test3'},
 
+    ]
+    return [json.dumps(x) for x in datas]
 @app.route("/data/chart", methods=['GET'])
 def chart_data():
-    if not isLoggedIn():
-        return redirect("/html/login.html",code=302)
-    return """var followers = {
-              x: [1, 2, 3, 4, 5, 6, 7],
-              y: [4, 5, 3, 1, -1, 2, 1],
-              type: 'scatter',
-              name: 'Followers'
-            };
-            var following = {
-              x: [1, 2, 3, 4, 5, 6, 7],
-              y: [2, 5, 3, 2, 1, -2, 3],
-              type: 'scatter',
-              name: 'Following'
-            };
-            var tweets = {
-              x: [1, 2, 3, 4, 5, 6, 7],
-              y: [16, 5, 11, 9, 14, 7, 2],
-              type: 'scatter',
-              name: 'Tweets'
-            };
-            var data = [followers, following, tweets];
-            var layout = {
+    data = fetch_and_store()
+    data_str=",".join([str(x) for x in data ])
+    return "var data = [%s];"%(data_str)
+@app.route("/layout/chart", methods=['GET'])
+def chart_layout():
+    return """var layout = {
               title: 'Changes during last week',
               xaxis: {
                 title: 'Days of the Week',
@@ -73,12 +78,9 @@ def chart_data():
                 showline: false
               }
             };
-            Plotly.newPlot('myDiv', data, layout);
     """
-    
 @app.route("/", methods=['GET', 'POST'])
 def index():
-
     return redirect("/html/index.html",code=302)
 
 @app.route("/api", methods=['GET', 'POST'])
