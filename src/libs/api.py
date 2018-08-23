@@ -58,25 +58,62 @@ def send_webs(path):
     
 class action(object):
     def __init__(self,db,table_name,datas=None):
+        print(datas)
+        str_datas = '\',\''.join(map(str, datas))
+        id_str="'%s'"%str_datas
         cur = db.cursor()
-        if datas:
-            for itm in datas:
-                # cur.execute('INSERT INTO '+table_name+' (name,created_at) VALUES (?,?)',(str(random.randint(1,1000)),datetime.datetime.now()))
-                cur.execute('INSERT INTO '+table_name+' (name,created_at) VALUES (?,?)',(str(itm[0]),itm[1]))
-                db.commit()
-        cur.execute('SELECT * FROM '+table_name)
-        self.rows = cur.fetchall()
+        # if datas:
+            # for itm in datas:
+                # # cur.execute('INSERT INTO '+table_name+' (name,created_at) VALUES (?,?)',(str(random.randint(1,1000)),datetime.datetime.now()))
+                # cur.execute('INSERT INTO '+table_name+' (name,created_at) VALUES (?,?)',(str(itm[0]),itm[1]))
+                # db.commit()
+                
+        cur.execute('SELECT * FROM `%s`'%(table_name))
+        data0 = cur.fetchall()
+        print(data0)
+        cur.execute('SELECT * FROM `%s` where userid in (%s) and `end` is null'%(table_name,id_str))
+        data1 = cur.fetchall()
+        print(data1)
+        cur.execute('SELECT * FROM `%s` where userid not in (%s) and `end` is null'%(table_name,id_str))
+        data2 = cur.fetchall()
+        print(data2)
+        for d2 in data2:
+            cur.execute("update %s set `end`='%s',`type`='2' where id='%s'" %(table_name,datetime.datetime.now(),d2[0]))
+            db.commit()
+            
+        id_str="'),('".join(map(str, datas))
+        id_str="('%s')"%id_str
+        cur.execute("WITH f_ids(ffid) AS (VALUES%s) select * from  f_ids WHERE ffid NOT IN (SELECT userid FROM %s)    "%(str(id_str),table_name))
+        data3 = cur.fetchall()
+        print(data3)
+        for d3 in data3:
+            cur.execute("insert into %s (userid,start,type) VALUES('%s','%s','1')"%(table_name,d3[0],datetime.datetime.now()))
+            db.commit()
+        cur.execute('SELECT count(id)as num ,date(`start`)as t  FROM `%s` where  `end` is null group by date(`start`)'%(table_name))
+        data4 = cur.fetchall()
+        self.rows = []
+        for itm in data4:
+            print(itm)
+            self.rows.append(itm)
     @property
     def x(self):
-        return [x[2] for x in self.rows]
+        return [x[1] for x in self.rows]
     @property
     def y(self):
-        return [x[1] for x in self.rows]
+        return [x[0] for x in self.rows]
+
 def fetch_and_store():
+    twt = TwitterCore()
+    twt.login(consumerKey=session['twt_user']['CONSUMERKEY'],
+            consumerSecret=session['twt_user']['CONSUMERSECRET'],
+            accessKey=session['twt_user']['ACCESSKEY'],
+            accessSecret=session['twt_user']['ACCESSSECRET']
+            )
+    username = twt.getMyUser()
     db = get_db()
-    followers = action(db,"followers",[[random.randint(1,1000),datetime.datetime.now()]])
-    friens = action(db,"friens",[[random.randint(1,1000),datetime.datetime.now()]])
-    blocks = action(db,"blocks",[[random.randint(1,1000),datetime.datetime.now()]])
+    followers = action(db,"followers",twt._TwitterCore__account.followers_ids(screen_name =username.screen_name))
+    friens = action(db,"friens",twt._TwitterCore__account.friends_ids(screen_name =username.screen_name))
+    blocks = action(db,"blocks",[])
     db.close()
     
     datas = [
@@ -152,13 +189,13 @@ def get_db():
 def check_db():
     db = get_db()
     cur = db.cursor()
-    cur.execute('DROP TABLE IF EXISTS users')
+    # cur.execute('DROP TABLE IF EXISTS users')
     # cur.execute('DROP TABLE IF EXISTS followers')
-    cur.execute('create table if not exists followers (id INTEGER PRIMARY KEY,name text,created_at timestamp)')
+    cur.execute('create table if not exists followers (id integer primary key,userid string,start date,end date,type string)')
     # cur.execute('DROP TABLE IF EXISTS friens')
-    cur.execute('create table if not exists friens (id INTEGER PRIMARY KEY,name text,created_at timestamp)')
+    cur.execute('create table if not exists friens (id integer primary key,userid string,start date,end date,type string)')
     # cur.execute('DROP TABLE IF EXISTS blocks')
-    cur.execute('create table if not exists blocks (id INTEGER PRIMARY KEY,name text,created_at timestamp)')
+    cur.execute('create table if not exists blocks (id integer primary key,userid string,start date,end date,type string)')
 
     db.close()
 def runServer():
